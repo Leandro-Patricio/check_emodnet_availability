@@ -9,7 +9,7 @@ import requests
 
 
 DEFAULT_MONITOR_URL = "https://monitor.emodnet.eu/resource/55/json"
-DEFAULT_REQUEST_TIMEOUT = 10
+DEFAULT_REQUEST_TIMEOUT = 60
 DISCORD_REQUEST_TIMEOUT = 5
 STALE_REPORT_THRESHOLD_MINUTES = 60  # monitor report older than this can't be trusted
 RELIABILITY_WARNING_THRESHOLD = 95.0  # percent, logged only, not a hard failure
@@ -154,21 +154,43 @@ def is_platform_api_available(
     return True
 
 
-def send_discord_alert(message: str) -> None:
-    """Send a failure notification when a Discord webhook is configured."""
+def send_discord_alert() -> None:
+    """Envia um embed visualmente limpo e estruturado para o Discord."""
     webhook_url = os.getenv("EMODNET_DISCORD_WEBHOOK_URL")
     if not webhook_url:
         return
 
-    payload = {"content": f"**EMODnet pipeline alert**\n{message}"}
+    checks = STATUS_REPORT["checks"]
+    has_failure = any(item["status"] == "FAIL" for item in checks)
+
+    # Campos organizados para o card do Discord
+    fields = []
+    for item in checks:
+        fields.append({
+            "name": f"{item['icon']} {item['name']}",
+            "value": f"```{item['details']}```" if item["status"] == "FAIL" else item["details"],
+            "inline": False
+        })
+
+    payload = {
+        "embeds": [
+            {
+                "title": "🚨 EMODnet Pipeline Alert" if has_failure else "✅ EMODnet Pipeline OK",
+                "color": 15158332 if has_failure else 3066993,  # Vermelho se falhar, Verde se passar
+                "fields": fields,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "footer": {"text": "GitHub Actions Health Check"}
+            }
+        ]
+    }
 
     try:
-        responseMonitor = requests.post(
+        response = requests.post(
             webhook_url,
             json=payload,
             timeout=DISCORD_REQUEST_TIMEOUT,
         )
-        responseMonitor.raise_for_status()
+        response.raise_for_status()
     except requests.exceptions.RequestException as error:
         print(f"Could not send Discord notification: {error}")
 
@@ -195,19 +217,19 @@ def print_summary_table() -> bool:
         print(f"{item['status']:<8} | {item['name']:<25} | {item['details']}")
     print("=" * 60 + "\n")
 
-    # GitHub Actions summary tab
+    # GitHub Actions summary tab (aqui o Markdown funciona perfeitamente)
     step_summary = os.getenv("GITHUB_STEP_SUMMARY")
     if step_summary:
         with open(step_summary, "a", encoding="utf-8") as f:
             f.write("### EMODnet Checks Summary\n\n")
             f.write(table_md)
 
-    # Dispara apenas uma mensagem no Discord com a tabela consolidada se houver falhas
     has_failure = any(item["status"] == "FAIL" for item in checks)
     if has_failure:
-        send_discord_alert(table_md)
+        send_discord_alert()
 
     return not has_failure
+
 
 
 if __name__ == "__main__":
