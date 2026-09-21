@@ -155,7 +155,7 @@ def is_platform_api_available(
 
 
 def send_discord_alert() -> None:
-    """Envia um embed visualmente limpo e estruturado para o Discord."""
+    """Envia um embed com tabela ASCII perfeitamente alinhada para o Discord."""
     webhook_url = os.getenv("EMODNET_DISCORD_WEBHOOK_URL")
     if not webhook_url:
         return
@@ -163,21 +163,25 @@ def send_discord_alert() -> None:
     checks = STATUS_REPORT["checks"]
     has_failure = any(item["status"] == "FAIL" for item in checks)
 
-    # Campos organizados para o card do Discord
-    fields = []
+    # 1. Cabeçalho da tabela monoespaçada
+    header = f"{'ST':<4} | {'TEST':<22} | {'DETAILS'}\n"
+    separator = f"{'-'*4}-+-{'-'*22}-+-{'-'*30}\n"
+    
+    table_rows = []
     for item in checks:
-        fields.append({
-            "name": f"{item['icon']} {item['name']}",
-            "value": f"```{item['details']}```" if item["status"] == "FAIL" else item["details"],
-            "inline": False
-        })
+        # Encurta detalhes longos para não quebrar a coluna
+        detail = (item["details"][:27] + "...") if len(item["details"]) > 30 else item["details"]
+        table_rows.append(f"{item['status']:<4} | {item['name'][:22]:<22} | {detail}")
 
+    table_ascii = "```text\n" + header + separator + "\n".join(table_rows) + "\n```"
+
+    # 2. Monta o card
     payload = {
         "embeds": [
             {
                 "title": "🚨 EMODnet Pipeline Alert" if has_failure else "✅ EMODnet Pipeline OK",
-                "color": 15158332 if has_failure else 3066993,  # Vermelho se falhar, Verde se passar
-                "fields": fields,
+                "color": 15158332 if has_failure else 3066993,
+                "description": table_ascii,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "footer": {"text": "GitHub Actions Health Check"}
             }
@@ -193,7 +197,6 @@ def send_discord_alert() -> None:
         response.raise_for_status()
     except requests.exceptions.RequestException as error:
         print(f"Could not send Discord notification: {error}")
-
 
 def _unavailable(name: str, message: str) -> bool:
     print(f"EMODnet is unavailable: {message}")
