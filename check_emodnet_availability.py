@@ -165,7 +165,7 @@ def send_discord_alert() -> None:
 
     # 1. Cabeçalho da tabela monoespaçada
     header = f"{'ST':<4} | {'TEST':<22} | {'DETAILS'}\n"
-    separator = f"{'-'*4}-+-{'-'*22}-+-{'-'*30}\n"
+    separator = f"{'-'*4}-+-{'-'*22}-+-{'-'*23}\n"
     
     table_rows = []
     for item in checks:
@@ -217,7 +217,7 @@ def print_summary_table() -> bool:
     print(f"{'STATUS':<8} | {'TEST NAME':<25} | DETAILS")
     print("-" * 60)
     for item in checks:
-        print(f"{item['status']:<8} | {item['name']:<25} | {item['details']}")
+        print(f"{item['icon']} {item['status']:<8} | {item['name']:<25} | {item['details']}")
     print("=" * 60 + "\n")
 
     # GitHub Actions summary tab (aqui o Markdown funciona perfeitamente)
