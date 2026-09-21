@@ -3,7 +3,7 @@
 import os
 import sys
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Dict, List, Optional
 
 import requests
 
@@ -15,10 +15,25 @@ STALE_REPORT_THRESHOLD_MINUTES = 60  # monitor report older than this can't be t
 RELIABILITY_WARNING_THRESHOLD = 95.0  # percent, logged only, not a hard failure
 
 # Real data host used by the generator, distinct from the host the monitor above tracks.
+PLATFORM_DATASETS_URL = "https://platform-erddap.emodnet-physics.eu/api/parameters/{parameter}/datasets"
 PLATFORM_API_URL = "https://platform-erddap.emodnet-physics.eu/api/parameters/{parameter}/data"
 PROBE_PLATFORM_CODE = "cent2"  # known-good reference station
 PROBE_WINDOW_DAYS_AGO = 3  # buoy reports lag behind "now" by a few days
 PROBE_WINDOW_HOURS = 24
+
+# --- Global state ---
+STATUS_REPORT: Dict[str, List[Dict[str, str]]] = {"checks": []}
+
+
+def record_result(name: str, passed: bool, details: str) -> None:
+    """Registra o resultado do teste no estado global."""
+    STATUS_REPORT["checks"].append(
+        {
+            "name": name,
+            "status": "✅ PASS" if passed else "❌ FAIL",
+            "details": details,
+        }
+    )
 
 
 def is_physics_erddap_available(
@@ -32,22 +47,20 @@ def is_physics_erddap_available(
     print("Checking EMODnet monitor status...")
 
     try:
-        response = requests.get(monitor_url, timeout=timeout)
+        responseMonitor = requests.get(monitor_url, timeout=timeout)
     except requests.exceptions.RequestException as error:
-        return _unavailable(f"Could not connect to the EMODnet monitor: {error}")
+        return _unavailable("EMODnet Resource Monitor", f"Could not connect to the EMODnet monitor: {error}")
 
-    if response.status_code != 200:
-        return _unavailable(
-            f"EMODnet monitor returned HTTP {response.status_code}."
-        )
+    if responseMonitor.status_code != 200:
+        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor returned HTTP {responseMonitor.status_code}.")
 
     try:
-        data = response.json()
+        data = responseMonitor.json()
     except ValueError as error:
-        return _unavailable(f"EMODnet monitor returned invalid JSON: {error}")
+        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor returned invalid JSON: {error}")
 
     if not isinstance(data, dict):
-        return _unavailable("EMODnet monitor returned an unexpected JSON payload.")
+        return _unavailable("EMODnet Resource Monitor", "EMODnet monitor returned an unexpected JSON payload.")
 
     # A stale report means the monitor stopped probing; its "status" can't be trusted.
     last_run = data.get("last_run")
@@ -56,21 +69,47 @@ def is_physics_erddap_available(
             last_run_dt = datetime.fromisoformat(last_run.replace("Z", "+00:00"))
             age = datetime.now(timezone.utc) - last_run_dt
             if age > timedelta(minutes=STALE_REPORT_THRESHOLD_MINUTES):
-                return _unavailable(f"EMODnet monitor report is stale ({age} old).")
+                return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor report is stale ({age} old).")
         except ValueError:
             pass
 
     if data.get("status") is not True:
         last_report = data.get("last_report") or {}
         message = last_report.get("message", "The monitor reported an unknown error.")
-        return _unavailable(f"EMODnet monitor reports an issue: {message}")
+        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor reports an issue: {message}")
 
     reliability = data.get("reliability")
     if isinstance(reliability, (int, float)) and reliability < RELIABILITY_WARNING_THRESHOLD:
         print(f"Warning: EMODnet monitor reliability is degraded ({reliability:.1f}%).")
 
     print("EMODnet monitor is healthy.")
-    return is_platform_api_available(timeout=timeout)
+    record_result("EMODnet Resource Monitor", True, "Healthy")
+    return True
+
+
+def is_platform_datasets_available(
+    parameter: str = "SLEV",
+    timeout: Optional[float] = None,
+) -> bool:
+    """Check if platform datasets endpoint returns information."""
+    timeout = timeout or float(os.getenv("EMODNET_REQUEST_TIMEOUT", DEFAULT_REQUEST_TIMEOUT))
+    url = PLATFORM_DATASETS_URL.format(parameter=parameter)
+
+    print("Checking EMODnet platform datasets API...")
+
+    try:
+        responseDatasets = requests.get(url, timeout=timeout)
+        print(f"Querying EMODNET platform datasets API: {responseDatasets.url}")
+        responseDatasets.raise_for_status()
+    except requests.exceptions.RequestException as error:
+        return _unavailable("Platform datasets API", f"Could not reach datasets API: {error}")
+
+    if not responseDatasets.text.strip():
+        return _unavailable("Platform datasets API", "Datasets API returned empty response.")
+
+    print("✅ EMODnet platform datasets API is healthy.")
+    record_result("Platform datasets API", True, "Information received")
+    return True
 
 
 def is_platform_api_available(
@@ -91,20 +130,21 @@ def is_platform_api_available(
     print("Checking EMODnet platform data API...")
 
     try:
-        response = requests.get(
+        responseSpecificBuoy = requests.get(
             PLATFORM_API_URL.format(parameter="SLEV"), params=params, timeout=timeout
         )
-        print(f"Querying EMODNET platform API: {response.url}")
-        response.raise_for_status()
+        print(f"Querying EMODNET platform API: {responseSpecificBuoy.url}")
+        responseSpecificBuoy.raise_for_status()
     except requests.exceptions.RequestException as error:
-        return _unavailable(f"Could not reach the EMODnet platform data API: {error}")
+        return _unavailable("Platform data API", f"Could not reach the EMODnet platform data API: {error}")
 
-    # Header-only response (no data rows) means the API is up but not serving data.
-    lines = [line for line in response.text.splitlines() if line.strip()]
+    # Header-only responseSpecificBuoy (no data rows) means the API is up but not serving data.
+    lines = [line for line in responseSpecificBuoy.text.splitlines() if line.strip()]
     if len(lines) <= 1:
-        return _unavailable("EMODnet platform data API returned no data rows for the probe window.")
+        return _unavailable("Platform data API", "EMODnet platform data API returned no data rows for the probe window.")
 
-    print("EMODnet platform data API is healthy.")
+    print("✅ EMODnet platform data API is healthy.")
+    record_result("Platform data API", True, f"Healthy ({len(lines)-1} rows)")
     return True
 
 
@@ -117,21 +157,58 @@ def send_discord_alert(message: str) -> None:
     payload = {"content": f"**EMODnet pipeline alert**\n{message}"}
 
     try:
-        response = requests.post(
+        responseMonitor = requests.post(
             webhook_url,
             json=payload,
             timeout=DISCORD_REQUEST_TIMEOUT,
         )
-        response.raise_for_status()
+        responseMonitor.raise_for_status()
     except requests.exceptions.RequestException as error:
         print(f"Could not send Discord notification: {error}")
 
 
-def _unavailable(message: str) -> bool:
+def _unavailable(name: str, message: str) -> bool:
     print(f"EMODnet is unavailable: {message}")
-    send_discord_alert(message)
+    record_result(name, False, message)
     return False
 
 
+def print_summary_table() -> bool:
+    """Print results table to stdout, GitHub Actions Step Summary, and send single Discord alert if needed."""
+    checks = STATUS_REPORT["checks"]
+
+    table_md = "| Status | Test Name | Details |\n| :---: | :--- | :--- |\n"
+    for item in checks:
+        table_md += f"| {item['icon']} | {item['name']} | {item['details']} |\n"
+
+    # Terminal output
+    print("\n" + "=" * 60)
+    print(f"{'STATUS':<8} | {'TEST NAME':<25} | DETAILS")
+    print("-" * 60)
+    for item in checks:
+        print(f"{item['status']:<8} | {item['name']:<25} | {item['details']}")
+    print("=" * 60 + "\n")
+
+    # GitHub Actions summary tab
+    step_summary = os.getenv("GITHUB_STEP_SUMMARY")
+    if step_summary:
+        with open(step_summary, "a", encoding="utf-8") as f:
+            f.write("### EMODnet Checks Summary\n\n")
+            f.write(table_md)
+
+    # Dispara apenas uma mensagem no Discord com a tabela consolidada se houver falhas
+    has_failure = any(item["status"] == "FAIL" for item in checks)
+    if has_failure:
+        send_discord_alert(table_md)
+
+    return not has_failure
+
+
 if __name__ == "__main__":
-    sys.exit(0 if is_physics_erddap_available() else 1)
+    monitor_ok = is_physics_erddap_available()
+    datasets_ok = is_platform_datasets_available()
+    data_ok = is_platform_api_available()
+
+    all_passed = print_summary_table()
+
+    sys.exit(0 if all_passed else 1)
