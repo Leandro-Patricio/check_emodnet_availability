@@ -30,8 +30,9 @@ def record_result(name: str, passed: bool, details: str) -> None:
     STATUS_REPORT["checks"].append(
         {
             "name": name,
-            "status": "✅ PASS" if passed else "❌ FAIL",
+            "status": "PASS" if passed else "FAIL",
             "details": details,
+            "icon": "✅" if passed else "❌",
         }
     )
 
