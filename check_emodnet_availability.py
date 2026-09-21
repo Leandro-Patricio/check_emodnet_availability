@@ -108,6 +108,11 @@ def is_platform_datasets_available(
     if not responseDatasets.text.strip():
         return _unavailable("Platform datasets API", "Datasets API returned empty response.")
 
+    # Header-only responseSpecificBuoy (no data rows) means the API is up but not serving data.
+    lines = [line for line in responseDatasets.text.splitlines() if line.strip()]
+    if len(lines) <= 1:
+        return _unavailable("Platform datasets API", "EMODnet platform datasets API returned no data rows for the probe window.")
+
     print("✅ EMODnet platform datasets API is healthy.")
     record_result("Platform datasets API", True, "Information received")
     return True
