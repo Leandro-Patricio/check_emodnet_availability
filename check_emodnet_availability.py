@@ -169,7 +169,7 @@ def send_discord_alert() -> None:
 
     linhas = [header, divisor]
     for item in checks:
-        icon = "PASS" if item["status"] == "PASS" else "FAIL"
+        icon = ":white_check_mark:" if item["status"] == "PASS" else ":x:"
         linhas.append(f"{icon:<6} | {item['name']:<30} | {item['details']}")
 
     tabela = "\n".join(linhas)
