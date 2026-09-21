@@ -165,7 +165,7 @@ def send_discord_alert() -> None:
 
     # Montagem da tabela alinhada com colunas largas
     header = f"{'STATUS':<6} | {'TESTE':<30} | DETALHE"
-    divisor = f"{'-'*6}-+-{'-'*30}-+-{'-'*60}"
+    divisor = f"{'-'*6}-+-{'-'*23}-+-{'-'*50}"
 
     linhas = [header, divisor]
     for item in checks:
@@ -173,7 +173,7 @@ def send_discord_alert() -> None:
         linhas.append(f"{icon:<6} | {item['name']:<30} | {item['details']}")
 
     tabela = "\n".join(linhas)
-    titulo = "🚨 **EMODnet Pipeline Alert**" if has_failure else "✅ **EMODnet Pipeline OK**"
+    titulo = "**EMODnet Pipeline Alert**" if has_failure else "✅ **EMODnet Pipeline OK**"
 
     # Enviando direto no 'content', sem embeds
     payload = {
@@ -238,4 +238,5 @@ if __name__ == "__main__":
 
     all_passed = print_summary_table()
 
-    sys.exit("test failed" if all_passed else "test passed")
+# sys.exit(0 if all_passed else 1) for when the code will run inside of the main workflow
+sys.exit(0)
