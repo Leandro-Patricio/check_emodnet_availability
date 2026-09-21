@@ -211,4 +211,4 @@ if __name__ == "__main__":
 
     all_passed = print_summary_table()
 
-    sys.exit(0 if all_passed else 1)
+    sys.exit("test failed" if all_passed else "test passed")
