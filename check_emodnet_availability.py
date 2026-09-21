@@ -173,7 +173,8 @@ def send_discord_alert() -> None:
         linhas.append(f"{icon:<6} | {item['name']:<30} | {item['details']}")
 
     tabela = "\n".join(linhas)
-    titulo = "**EMODnet Pipeline Alert**" if has_failure else "✅ **EMODnet Pipeline OK**"
+    date_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    titulo = f"**EMODnet Pipeline Alert** - {date_time}" if has_failure else f"✅ **EMODnet Pipeline OK** - {date_time}"
 
     # Enviando direto no 'content', sem embeds
     payload = {
