@@ -155,7 +155,7 @@ def is_platform_api_available(
 
 
 def send_discord_alert() -> None:
-    """Envia um embed com tabela ASCII perfeitamente alinhada para o Discord."""
+    """Envia uma mensagem de texto simples sem card, usando a largura total do Discord."""
     webhook_url = os.getenv("EMODNET_DISCORD_WEBHOOK_URL")
     if not webhook_url:
         return
@@ -163,29 +163,21 @@ def send_discord_alert() -> None:
     checks = STATUS_REPORT["checks"]
     has_failure = any(item["status"] == "FAIL" for item in checks)
 
-    # 1. Cabeçalho da tabela monoespaçada
-    header = f"{'ST':<4} | {'TEST':<22} | {'DETAILS'}\n"
-    separator = f"{'-'*4}-+-{'-'*22}-+-{'-'*23}\n"
-    
-    table_rows = []
+    # Montagem da tabela alinhada com colunas largas
+    header = f"{'STATUS':<6} | {'TESTE':<30} | DETALHE"
+    divisor = f"{'-'*6}-+-{'-'*30}-+-{'-'*60}"
+
+    linhas = [header, divisor]
     for item in checks:
-        # Encurta detalhes longos para não quebrar a coluna
-        detail = (item["details"][:27] + "...") if len(item["details"]) > 30 else item["details"]
-        table_rows.append(f"{item['status']:<4} | {item['name'][:22]:<22} | {detail}")
+        icon = "PASS" if item["status"] == "PASS" else "FAIL"
+        linhas.append(f"{icon:<6} | {item['name']:<30} | {item['details']}")
 
-    table_ascii = "```text\n" + header + separator + "\n".join(table_rows) + "\n```"
+    tabela = "\n".join(linhas)
+    titulo = "🚨 **EMODnet Pipeline Alert**" if has_failure else "✅ **EMODnet Pipeline OK**"
 
-    # 2. Monta o card
+    # Enviando direto no 'content', sem embeds
     payload = {
-        "embeds": [
-            {
-                "title": "🚨 EMODnet Pipeline Alert" if has_failure else "✅ EMODnet Pipeline OK",
-                "color": 15158332 if has_failure else 3066993,
-                "description": table_ascii,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "footer": {"text": "GitHub Actions Health Check"}
-            }
-        ]
+        "content": f"{titulo}\n```text\n{tabela}\n```"
     }
 
     try:
@@ -197,6 +189,10 @@ def send_discord_alert() -> None:
         response.raise_for_status()
     except requests.exceptions.RequestException as error:
         print(f"Could not send Discord notification: {error}")
+
+
+
+
 
 def _unavailable(name: str, message: str) -> bool:
     print(f"EMODnet is unavailable: {message}")
