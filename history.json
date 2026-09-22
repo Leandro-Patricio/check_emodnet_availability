@@ -28,5 +28,15 @@
       "Platform datasets API": true,
       "Platform data API": "HTTP 404"
     }
+  },
+  {
+    "attempt": 4,
+    "ts": "2026-09-22T12:01Z",
+    "ok": false,
+    "tests": {
+      "EMODnet Resource Monitor": true,
+      "Platform datasets API": true,
+      "Platform data API": "HTTP 404"
+    }
   }
 ]
