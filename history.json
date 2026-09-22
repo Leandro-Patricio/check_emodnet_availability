@@ -1,0 +1,21 @@
+[
+  {
+    "attempt": 1,
+    "timestamp_utc": "2026-09-22T08:50:14.736481+00:00",
+    "all_passed": false,
+    "tests": {
+      "EMODnet Resource Monitor": {
+        "passed": true,
+        "details": "Healthy"
+      },
+      "Platform datasets API": {
+        "passed": false,
+        "details": "EMODnet platform datasets API returned no data rows for the probe window."
+      },
+      "Platform data API": {
+        "passed": false,
+        "details": "Could not reach the EMODnet platform data API: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-09-18T08%3A50%3A13Z&end_time=2026-09-19T08%3A50%3A13Z&platform_code=cent2&format=csv"
+      }
+    }
+  }
+]
