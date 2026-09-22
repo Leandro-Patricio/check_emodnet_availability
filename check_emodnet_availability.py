@@ -1,12 +1,13 @@
 """EMODnet service availability checks used by the TSL generator."""
 
+import json
 import os
 import sys
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Dict, List, Optional
 
 import requests
-
 
 DEFAULT_MONITOR_URL = "https://monitor.emodnet.eu/resource/55/json"
 DEFAULT_REQUEST_TIMEOUT = 60
@@ -21,12 +22,14 @@ PROBE_PLATFORM_CODE = "cent2"  # known-good reference station
 PROBE_WINDOW_DAYS_AGO = 3  # buoy reports lag behind "now" by a few days
 PROBE_WINDOW_HOURS = 24
 
+HISTORY_FILE = Path("history.json")
+
 # --- Global state ---
 STATUS_REPORT: Dict[str, List[Dict[str, str]]] = {"checks": []}
 
 
 def record_result(name: str, passed: bool, details: str) -> None:
-    """Registra o resultado do teste no estado global."""
+    """Record test result into global status report."""
     STATUS_REPORT["checks"].append(
         {
             "name": name,
@@ -35,6 +38,43 @@ def record_result(name: str, passed: bool, details: str) -> None:
             "icon": "✅" if passed else "❌",
         }
     )
+
+
+def update_execution_history() -> None:
+    """Load existing execution history, append current run record, and persist to file."""
+    history = []
+
+    if HISTORY_FILE.exists():
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                history = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            history = []
+
+    attempt_number = len(history) + 1
+    current_time = datetime.now(timezone.utc).isoformat()
+
+    checks_summary = {
+        item["name"]: {
+            "passed": (item["status"] == "PASS"),
+            "details": item["details"],
+        }
+        for item in STATUS_REPORT["checks"]
+    }
+
+    record = {
+        "attempt": attempt_number,
+        "timestamp_utc": current_time,
+        "all_passed": all(item["status"] == "PASS" for item in STATUS_REPORT["checks"]),
+        "tests": checks_summary,
+    }
+
+    history.append(record)
+
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2, ensure_ascii=False)
+
+    print(f"History successfully updated: attempt #{attempt_number}")
 
 
 def is_physics_erddap_available(
@@ -155,7 +195,7 @@ def is_platform_api_available(
 
 
 def send_discord_alert() -> None:
-    """Envia uma mensagem de texto simples sem card, usando a largura total do Discord."""
+    """Send plain text table alert using full Discord message width."""
     webhook_url = os.getenv("EMODNET_DISCORD_WEBHOOK_URL")
     if not webhook_url:
         return
@@ -163,22 +203,20 @@ def send_discord_alert() -> None:
     checks = STATUS_REPORT["checks"]
     has_failure = any(item["status"] == "FAIL" for item in checks)
 
-    # Montagem da tabela alinhada com colunas largas
-    header = f"{'STATUS':<6} | {'TESTE':<30} | DETALHE"
+    header = f"{'STATUS':<6} | {'TEST NAME':<30} | DETAILS"
     divisor = f"{'-'*6}-+-{'-'*23}-+-{'-'*50}"
 
-    linhas = [header, divisor]
+    lines = [header, divisor]
     for item in checks:
         icon = "✅ PASS" if item["status"] == "PASS" else "❌ FAIL"
-        linhas.append(f"{icon:<6} | {item['name']:<30} | {item['details']}")
+        lines.append(f"{icon:<6} | {item['name']:<30} | {item['details']}")
 
-    tabela = "\n".join(linhas)
+    table = "\n".join(lines)
     date_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    titulo = f"**EMODnet Pipeline Alert** - {date_time}" if has_failure else f"✅ **EMODnet Pipeline OK** - {date_time}"
+    title = f"**EMODnet Pipeline Alert** - {date_time}" if has_failure else f"✅ **EMODnet Pipeline OK** - {date_time}"
 
-    # Enviando direto no 'content', sem embeds
     payload = {
-        "content": f"{titulo}\n```text\n{tabela}\n```"
+        "content": f"{title}\n```text\n{table}\n```"
     }
 
     try:
@@ -190,9 +228,6 @@ def send_discord_alert() -> None:
         response.raise_for_status()
     except requests.exceptions.RequestException as error:
         print(f"Could not send Discord notification: {error}")
-
-
-
 
 
 def _unavailable(name: str, message: str) -> bool:
@@ -209,7 +244,6 @@ def print_summary_table() -> bool:
     for item in checks:
         table_md += f"| {item['icon']} | {item['name']} | {item['details']} |\n"
 
-    # Terminal output
     print("\n" + "=" * 60)
     print(f"{'STATUS':<8} | {'TEST NAME':<25} | DETAILS")
     print("-" * 60)
@@ -217,7 +251,6 @@ def print_summary_table() -> bool:
         print(f"{item['icon']} {item['status']:<8} | {item['name']:<25} | {item['details']}")
     print("=" * 60 + "\n")
 
-    # GitHub Actions summary tab (aqui o Markdown funciona perfeitamente)
     step_summary = os.getenv("GITHUB_STEP_SUMMARY")
     if step_summary:
         with open(step_summary, "a", encoding="utf-8") as f:
@@ -231,13 +264,13 @@ def print_summary_table() -> bool:
     return not has_failure
 
 
-
 if __name__ == "__main__":
     monitor_ok = is_physics_erddap_available()
     datasets_ok = is_platform_datasets_available()
     data_ok = is_platform_api_available()
 
     all_passed = print_summary_table()
+    update_execution_history()
 
-# sys.exit(0 if all_passed else 1) for when the code will run inside of the main workflow
-sys.exit(0)
+    # sys.exit(0 if all_passed else 1) for when the code will run inside of the main workflow
+    sys.exit(0)
