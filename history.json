@@ -1,0 +1,12 @@
+[
+  {
+    "attempt": 1,
+    "ts": "2026-09-22T09:31Z",
+    "ok": false,
+    "tests": {
+      "monitor": "EMODnet monitor returned HTTP 503.",
+      "datasets": true,
+      "data": "Could not reach the EMODnet platform data API: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-09-18T09%3A31%3A03Z&end_time=2026-09-19T09%3A31%3A03Z&platform_code=cent2&format=csv"
+    }
+  }
+]
