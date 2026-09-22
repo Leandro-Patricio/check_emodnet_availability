@@ -94,18 +94,18 @@ def is_monitor_available(
     try:
         responseMonitor = requests.get(monitor_url, timeout=timeout)
     except requests.exceptions.RequestException as error:
-        return _unavailable("EMODnet Resource Monitor", f"Could not connect to the EMODnet monitor: {error}", url=monitor_url)
+        return _unavailable("EMODnet Monitor", f"Could not connect to the EMODnet monitor: {error}", url=monitor_url)
 
     if responseMonitor.status_code != 200:
-        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor returned HTTP {responseMonitor.status_code}.", url=monitor_url)
+        return _unavailable("EMODnet Monitor", f"EMODnet monitor returned HTTP {responseMonitor.status_code}.", url=monitor_url)
 
     try:
         data = responseMonitor.json()
     except ValueError as error:
-        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor returned invalid JSON: {error}", url=monitor_url)
+        return _unavailable("EMODnet Monitor", f"EMODnet monitor returned invalid JSON: {error}", url=monitor_url)
 
     if not isinstance(data, dict):
-        return _unavailable("EMODnet Resource Monitor", "EMODnet monitor returned an unexpected JSON payload.", url=monitor_url)
+        return _unavailable("EMODnet Monitor", "EMODnet monitor returned an unexpected JSON payload.", url=monitor_url)
 
     # A stale report means the monitor stopped probing; its "status" can't be trusted.
     last_run = data.get("last_run")
@@ -114,21 +114,21 @@ def is_monitor_available(
             last_run_dt = datetime.fromisoformat(last_run.replace("Z", "+00:00"))
             age = datetime.now(timezone.utc) - last_run_dt
             if age > timedelta(minutes=STALE_REPORT_THRESHOLD_MINUTES):
-                return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor report is stale ({age} old).", url=monitor_url)
+                return _unavailable("EMODnet Monitor", f"EMODnet monitor report is stale ({age} old).", url=monitor_url)
         except ValueError:
             pass
 
     if data.get("status") is not True:
         last_report = data.get("last_report") or {}
         message = last_report.get("message", "The monitor reported an unknown error.")
-        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor reports an issue: {message}", url=monitor_url)
+        return _unavailable("EMODnet Monitor", f"EMODnet monitor reports an issue: {message}", url=monitor_url)
 
     reliability = data.get("reliability")
     if isinstance(reliability, (int, float)) and reliability < RELIABILITY_WARNING_THRESHOLD:
         print(f"Warning: EMODnet monitor reliability is degraded ({reliability:.1f}%).")
 
     print("EMODnet monitor is healthy.")
-    record_result("EMODnet Resource Monitor", True, "Healthy", url=monitor_url)
+    record_result("EMODnet Monitor", True, "Healthy", url=monitor_url)
     return True
 
 
@@ -140,28 +140,28 @@ def is_platform_datasets_available(
     timeout = timeout or float(os.getenv("EMODNET_REQUEST_TIMEOUT", DEFAULT_REQUEST_TIMEOUT))
     url = PLATFORM_DATASETS_URL.format(parameter=parameter)
 
-    print("Checking EMODnet platform datasets API...")
+    print("Checking EMODnet API Datasets...")
 
     try:
         responseDatasets = requests.get(url, timeout=timeout)
-        print(f"Querying EMODNET platform datasets API: {responseDatasets.url}")
+        print(f"Querying EMODNET API Datasets: {responseDatasets.url}")
         responseDatasets.raise_for_status()
     except requests.exceptions.RequestException as error:
-        return _unavailable("Platform datasets API", f"Could not reach datasets API: {error}", url=url)
+        return _unavailable("API Datasets", f"Could not reach datasets API: {error}", url=url)
 
     try:
         payload = responseDatasets.json()
     except ValueError as error:
-        return _unavailable("Platform datasets API", f"Returned invalid JSON: {error}", url=url)
+        return _unavailable("API Datasets", f"Returned invalid JSON: {error}", url=url)
 
     datasets = payload.get("datasets") if isinstance(payload, dict) else None
     dataset_count = payload.get("datasetCount", 0) if isinstance(payload, dict) else 0
 
     if not isinstance(datasets, list) or len(datasets) == 0:
-        return _unavailable("Platform datasets API", "Datasets API returned 0 datasets.", url=url)
+        return _unavailable("API Datasets", "Datasets API returned 0 datasets.", url=url)
 
-    print(f"✅ EMODnet platform datasets API is healthy ({dataset_count} datasets found).")
-    record_result("Platform datasets API", True, f"Healthy ({dataset_count} datasets)", url=url)
+    print(f"✅ EMODnet API Datasets is healthy ({dataset_count} datasets found).")
+    record_result("API Datasets", True, f"Healthy ({dataset_count} datasets)", url=url)
     return True
 
 
@@ -181,7 +181,7 @@ def is_individual_buoy_available(
         "format": "csv",
     }
 
-    print("Checking EMODnet platform data API...")
+    print("Checking EMODnet API Data (cent2)...")
 
     try:
         responseSpecificBuoy = requests.get(
@@ -192,14 +192,14 @@ def is_individual_buoy_available(
     except requests.exceptions.RequestException as error:
         status_code = getattr(getattr(error, "response", None), "status_code", None)
         detail = f"HTTP {status_code}" if status_code else "Connection error"
-        return _unavailable("Platform data API", detail, url=url)
+        return _unavailable("API Data (cent2)", detail, url=responseSpecificBuoy.url)
 
     lines = [line for line in responseSpecificBuoy.text.splitlines() if line.strip()]
     if len(lines) <= 1:
-        return _unavailable("Platform data API", "No data rows", url=url)
+        return _unavailable("API Data (cent2)", "No data rows", url=responseSpecificBuoy.url)
 
-    print("✅ EMODnet platform data API is healthy.")
-    record_result("Platform data API", True, f"Healthy ({len(lines)-1} rows)", url=url)
+    print("✅ EMODnet API Data (cent2) is healthy.")
+    record_result("API Data (cent2)", True, f"Healthy ({len(lines)-1} rows)", url=responseSpecificBuoy.url)
     return True
 
 
