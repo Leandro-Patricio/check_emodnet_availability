@@ -208,13 +208,13 @@ def send_discord_alert() -> None:
     checks = STATUS_REPORT["checks"]
     has_failure = any(item["status"] == "FAIL" for item in checks)
 
-    header = f"{'STATUS':<6} | {'TEST NAME':<30} | DETAILS"
-    divisor = f"{'-'*6}-+-{'-'*23}-+-{'-'*50}"
+    header = f"{'STATUS':<6} | {'TEST NAME':<25} | DETAILS"
+    divisor = f"{'-'*6}-+-{'-'*25}-+-{'-'*50}"
 
     lines = [header, divisor]
     for item in checks:
         icon = "✅ PASS" if item["status"] == "PASS" else "❌ FAIL"
-        lines.append(f"{icon:<6} | {item['name']:<30} | {item['details']}")
+        lines.append(f"{icon:<6} | {item['name']:<25} | {item['details']}")
 
     table = "\n".join(lines)
     date_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
