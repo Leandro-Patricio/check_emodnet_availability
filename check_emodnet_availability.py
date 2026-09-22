@@ -135,7 +135,7 @@ def is_platform_datasets_available(
     parameter: str = "SLEV",
     timeout: Optional[float] = None,
 ) -> bool:
-    """Check if platform datasets endpoint returns information."""
+    """Check if platform datasets endpoint returns valid dataset records."""
     timeout = timeout or float(os.getenv("EMODNET_REQUEST_TIMEOUT", DEFAULT_REQUEST_TIMEOUT))
     url = PLATFORM_DATASETS_URL.format(parameter=parameter)
 
@@ -148,15 +148,19 @@ def is_platform_datasets_available(
     except requests.exceptions.RequestException as error:
         return _unavailable("Platform datasets API", f"Could not reach datasets API: {error}")
 
-    if not responseDatasets.text.strip():
-        return _unavailable("Platform datasets API", "Datasets API returned empty response.")
+    try:
+        payload = responseDatasets.json()
+    except ValueError as error:
+        return _unavailable("Platform datasets API", f"Returned invalid JSON: {error}")
 
-    lines = [line for line in responseDatasets.text.splitlines() if line.strip()]
-    if len(lines) <= 1:
-        return _unavailable("Platform datasets API", "EMODnet platform datasets API returned no data rows for the probe window.")
+    datasets = payload.get("datasets") if isinstance(payload, dict) else None
+    dataset_count = payload.get("datasetCount", 0) if isinstance(payload, dict) else 0
 
-    print("✅ EMODnet platform datasets API is healthy.")
-    record_result("Platform datasets API", True, "Information received")
+    if not isinstance(datasets, list) or len(datasets) == 0:
+        return _unavailable("Platform datasets API", "Datasets API returned 0 datasets.")
+
+    print(f"✅ EMODnet platform datasets API is healthy ({dataset_count} datasets found).")
+    record_result("Platform datasets API", True, f"Healthy ({dataset_count} datasets)")
     return True
 
 
