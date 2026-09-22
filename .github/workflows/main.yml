@@ -1,9 +1,6 @@
 name: EMODnet Service Monitor
 
 on:
-# keep comment for future reference if we want to schedule the workflow to run every 30 minutes
-  # schedule:
-  #   - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
