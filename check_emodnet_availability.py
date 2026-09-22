@@ -210,7 +210,7 @@ def send_discord_alert() -> None:
     has_failure = any(item["status"] == "FAIL" for item in checks)
 
     header = f"{'STATUS':<6} | {'TEST NAME':<25} | DETAILS"
-    divisor = f"{'-'*6}-+-{'-'*25}-+-{'-'*50}"
+    divisor = f"{'-'*7}-+-{'-'*25}-+-{'-'*45}"
 
     lines = [header, divisor]
     links = []
