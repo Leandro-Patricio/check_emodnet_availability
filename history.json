@@ -1,3 +1,22 @@
 [
-  {"attempt": 1, "ts": "2026-09-22T10:31Z", "ok": false, "tests": {"monitor": true, "datasets": true, "data": "HTTP 404"}}
+  {
+    "attempt": 1,
+    "ts": "2026-09-22T10:31Z",
+    "ok": false,
+    "tests": {
+      "monitor": true,
+      "datasets": true,
+      "data": "HTTP 404"
+    }
+  },
+  {
+    "attempt": 2,
+    "ts": "2026-09-22T11:01Z",
+    "ok": false,
+    "tests": {
+      "EMODnet Resource Monitor": true,
+      "Platform datasets API": true,
+      "Platform data API": "HTTP 404"
+    }
+  }
 ]
