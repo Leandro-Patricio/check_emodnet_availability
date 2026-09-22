@@ -28,14 +28,15 @@ HISTORY_FILE = Path("history.json")
 STATUS_REPORT: Dict[str, List[Dict[str, str]]] = {"checks": []}
 
 
-def record_result(name: str, passed: bool, details: str) -> None:
-    """Record test result into global status report."""
+def record_result(name: str, passed: bool, details: str, url: Optional[str] = None) -> None:
+    """Record test result into global status report with optional target URL."""
     STATUS_REPORT["checks"].append(
         {
             "name": name,
             "status": "PASS" if passed else "FAIL",
             "details": details,
             "icon": "✅" if passed else "❌",
+            "url": url,
         }
     )
 
@@ -55,9 +56,9 @@ def update_execution_history() -> None:
     current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
 
     alias_map = {
-        "EMODnet Resource Monitor": "monitor",
-        "Platform datasets API": "datasets",
-        "Platform data API": "data",
+        "Resource Monitor": "monitor",
+        "API Datasets": "datasets",
+        "API Data (cent2)": "data",
     }
 
     compact_tests = {}
@@ -93,18 +94,18 @@ def is_physics_erddap_available(
     try:
         responseMonitor = requests.get(monitor_url, timeout=timeout)
     except requests.exceptions.RequestException as error:
-        return _unavailable("EMODnet Resource Monitor", f"Could not connect to the EMODnet monitor: {error}")
+        return _unavailable("EMODnet Resource Monitor", f"Could not connect to the EMODnet monitor: {error}", url=monitor_url)
 
     if responseMonitor.status_code != 200:
-        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor returned HTTP {responseMonitor.status_code}.")
+        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor returned HTTP {responseMonitor.status_code}.", url=monitor_url)
 
     try:
         data = responseMonitor.json()
     except ValueError as error:
-        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor returned invalid JSON: {error}")
+        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor returned invalid JSON: {error}", url=monitor_url)
 
     if not isinstance(data, dict):
-        return _unavailable("EMODnet Resource Monitor", "EMODnet monitor returned an unexpected JSON payload.")
+        return _unavailable("EMODnet Resource Monitor", "EMODnet monitor returned an unexpected JSON payload.", url=monitor_url)
 
     # A stale report means the monitor stopped probing; its "status" can't be trusted.
     last_run = data.get("last_run")
@@ -113,21 +114,21 @@ def is_physics_erddap_available(
             last_run_dt = datetime.fromisoformat(last_run.replace("Z", "+00:00"))
             age = datetime.now(timezone.utc) - last_run_dt
             if age > timedelta(minutes=STALE_REPORT_THRESHOLD_MINUTES):
-                return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor report is stale ({age} old).")
+                return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor report is stale ({age} old).", url=monitor_url)
         except ValueError:
             pass
 
     if data.get("status") is not True:
         last_report = data.get("last_report") or {}
         message = last_report.get("message", "The monitor reported an unknown error.")
-        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor reports an issue: {message}")
+        return _unavailable("EMODnet Resource Monitor", f"EMODnet monitor reports an issue: {message}", url=monitor_url)
 
     reliability = data.get("reliability")
     if isinstance(reliability, (int, float)) and reliability < RELIABILITY_WARNING_THRESHOLD:
         print(f"Warning: EMODnet monitor reliability is degraded ({reliability:.1f}%).")
 
     print("EMODnet monitor is healthy.")
-    record_result("EMODnet Resource Monitor", True, "Healthy")
+    record_result("EMODnet Resource Monitor", True, "Healthy", url=monitor_url)
     return True
 
 
@@ -146,21 +147,21 @@ def is_platform_datasets_available(
         print(f"Querying EMODNET platform datasets API: {responseDatasets.url}")
         responseDatasets.raise_for_status()
     except requests.exceptions.RequestException as error:
-        return _unavailable("Platform datasets API", f"Could not reach datasets API: {error}")
+        return _unavailable("Platform datasets API", f"Could not reach datasets API: {error}", url=url)
 
     try:
         payload = responseDatasets.json()
     except ValueError as error:
-        return _unavailable("Platform datasets API", f"Returned invalid JSON: {error}")
+        return _unavailable("Platform datasets API", f"Returned invalid JSON: {error}", url=url)
 
     datasets = payload.get("datasets") if isinstance(payload, dict) else None
     dataset_count = payload.get("datasetCount", 0) if isinstance(payload, dict) else 0
 
     if not isinstance(datasets, list) or len(datasets) == 0:
-        return _unavailable("Platform datasets API", "Datasets API returned 0 datasets.")
+        return _unavailable("Platform datasets API", "Datasets API returned 0 datasets.", url=url)
 
     print(f"✅ EMODnet platform datasets API is healthy ({dataset_count} datasets found).")
-    record_result("Platform datasets API", True, f"Healthy ({dataset_count} datasets)")
+    record_result("Platform datasets API", True, f"Healthy ({dataset_count} datasets)", url=url)
     return True
 
 
@@ -212,16 +213,25 @@ def send_discord_alert() -> None:
     divisor = f"{'-'*6}-+-{'-'*25}-+-{'-'*50}"
 
     lines = [header, divisor]
+    links = []
     for item in checks:
         icon = "✅ PASS" if item["status"] == "PASS" else "❌ FAIL"
         lines.append(f"{icon:<6} | {item['name']:<25} | {item['details']}")
+        
+        # Create clickable links for Discord if a URL is provided
+        url = item.get("url")
+        if url:
+            links.append(f"🔗 [{item['name']}]({url})")
 
     table = "\n".join(lines)
     date_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     title = f"**EMODnet Pipeline Alert** - {date_time}" if has_failure else f"✅ **EMODnet Pipeline OK** - {date_time}"
+    
+    # Links clickable in Discord using Markdown formatting
+    links_text = " • ".join(links)
 
     payload = {
-        "content": f"{title}\n```text\n{table}\n```"
+        "content": f"{title}\n```text\n{table}\n```\n{links_text}"
     }
 
     try:
@@ -235,11 +245,11 @@ def send_discord_alert() -> None:
         print(f"Could not send Discord notification: {error}")
 
 
-def _unavailable(name: str, message: str) -> bool:
-    print(f"EMODnet is unavailable: {message}")
-    record_result(name, False, message)
-    return False
 
+def _unavailable(name: str, message: str, url: Optional[str] = None) -> bool:
+    print(f"EMODnet is unavailable: {message}")
+    record_result(name, False, message, url=url)
+    return False
 
 def print_summary_table() -> bool:
     """Print results table to stdout, GitHub Actions Step Summary, and send single Discord alert if needed."""
