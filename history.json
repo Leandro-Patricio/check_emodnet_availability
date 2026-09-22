@@ -178,5 +178,15 @@
       "datasets": true,
       "data": "HTTP 404"
     }
+  },
+  {
+    "attempt": 19,
+    "ts": "2026-09-22T19:31Z",
+    "ok": false,
+    "tests": {
+      "EMODnet Monitor": true,
+      "datasets": true,
+      "data": "HTTP 404"
+    }
   }
 ]
