@@ -41,7 +41,7 @@ def record_result(name: str, passed: bool, details: str) -> None:
 
 
 def update_execution_history() -> None:
-    """Load existing execution history, append current run record, and persist to file."""
+    """Load full historical log, append compact record permanently, and persist."""
     history = []
 
     if HISTORY_FILE.exists():
@@ -52,21 +52,24 @@ def update_execution_history() -> None:
             history = []
 
     attempt_number = len(history) + 1
-    current_time = datetime.now(timezone.utc).isoformat()
+    current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
 
-    checks_summary = {
-        item["name"]: {
-            "passed": (item["status"] == "PASS"),
-            "details": item["details"],
-        }
-        for item in STATUS_REPORT["checks"]
+    alias_map = {
+        "EMODnet Resource Monitor": "monitor",
+        "Platform datasets API": "datasets",
+        "Platform data API": "data",
     }
+
+    compact_tests = {}
+    for item in STATUS_REPORT["checks"]:
+        key = alias_map.get(item["name"], item["name"])
+        compact_tests[key] = True if item["status"] == "PASS" else item["details"]
 
     record = {
         "attempt": attempt_number,
-        "timestamp_utc": current_time,
-        "all_passed": all(item["status"] == "PASS" for item in STATUS_REPORT["checks"]),
-        "tests": checks_summary,
+        "ts": current_time,
+        "ok": all(item["status"] == "PASS" for item in STATUS_REPORT["checks"]),
+        "tests": compact_tests,
     }
 
     history.append(record)
@@ -74,7 +77,7 @@ def update_execution_history() -> None:
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2, ensure_ascii=False)
 
-    print(f"History successfully updated: attempt #{attempt_number}")
+    print(f"History successfully appended: attempt #{attempt_number} (total records: {len(history)})")
 
 
 def is_physics_erddap_available(
@@ -148,7 +151,6 @@ def is_platform_datasets_available(
     if not responseDatasets.text.strip():
         return _unavailable("Platform datasets API", "Datasets API returned empty response.")
 
-    # Header-only responseSpecificBuoy (no data rows) means the API is up but not serving data.
     lines = [line for line in responseDatasets.text.splitlines() if line.strip()]
     if len(lines) <= 1:
         return _unavailable("Platform datasets API", "EMODnet platform datasets API returned no data rows for the probe window.")
@@ -184,7 +186,6 @@ def is_platform_api_available(
     except requests.exceptions.RequestException as error:
         return _unavailable("Platform data API", f"Could not reach the EMODnet platform data API: {error}")
 
-    # Header-only responseSpecificBuoy (no data rows) means the API is up but not serving data.
     lines = [line for line in responseSpecificBuoy.text.splitlines() if line.strip()]
     if len(lines) <= 1:
         return _unavailable("Platform data API", "EMODnet platform data API returned no data rows for the probe window.")
@@ -272,5 +273,4 @@ if __name__ == "__main__":
     all_passed = print_summary_table()
     update_execution_history()
 
-    # sys.exit(0 if all_passed else 1) for when the code will run inside of the main workflow
     sys.exit(0)
