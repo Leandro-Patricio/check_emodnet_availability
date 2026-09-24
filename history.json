@@ -1098,5 +1098,15 @@
       "datasets": true,
       "data": true
     }
+  },
+  {
+    "attempt": 111,
+    "ts": "2026-09-24T17:31Z",
+    "ok": false,
+    "tests": {
+      "EMODnet Monitor": "EMODnet monitor returned HTTP 503.",
+      "datasets": true,
+      "data": true
+    }
   }
 ]
