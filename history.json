@@ -1368,5 +1368,15 @@
       "datasets": true,
       "data": true
     }
+  },
+  {
+    "attempt": 138,
+    "ts": "2026-09-25T07:02Z",
+    "ok": false,
+    "tests": {
+      "EMODnet Monitor": true,
+      "datasets": true,
+      "data": "No data rows"
+    }
   }
 ]
