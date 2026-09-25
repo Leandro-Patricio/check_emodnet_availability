@@ -1498,5 +1498,15 @@
       "datasets": "Could not reach datasets API: HTTPSConnectionPool(host='platform-erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=60.0)",
       "data": "HTTP 500"
     }
+  },
+  {
+    "attempt": 151,
+    "ts": "2026-09-25T13:33Z",
+    "ok": false,
+    "tests": {
+      "EMODnet Monitor": true,
+      "datasets": "Could not reach datasets API: HTTPSConnectionPool(host='platform-erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=60.0)",
+      "data": "No data rows"
+    }
   }
 ]
