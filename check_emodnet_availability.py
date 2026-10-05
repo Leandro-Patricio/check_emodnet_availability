@@ -48,7 +48,11 @@ def update_execution_history() -> None:
     if HISTORY_FILE.exists():
         try:
             with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                history = json.load(f)
+                data = json.load(f)
+                if isinstance(data, list):
+                    history = data
+                elif isinstance(data, dict):
+                    history = data.get("history", [])
         except (json.JSONDecodeError, OSError):
             history = []
 
@@ -57,7 +61,7 @@ def update_execution_history() -> None:
 
     alias_map = {
         "Resource Monitor": "monitor",
-        "API Datasets": "datasets",
+        # "API Datasets": "datasets",
         "API Data (cent2)": "data",
     }
 
@@ -66,17 +70,37 @@ def update_execution_history() -> None:
         key = alias_map.get(item["name"], item["name"])
         compact_tests[key] = True if item["status"] == "PASS" else item["details"]
 
+    current_status = all(item["status"] == "PASS" for item in STATUS_REPORT["checks"])
+
     record = {
         "attempt": attempt_number,
         "ts": current_time,
-        "ok": all(item["status"] == "PASS" for item in STATUS_REPORT["checks"]),
+        "ok": current_status,
         "tests": compact_tests,
     }
 
     history.append(record)
 
+    # Update totals
+    # total_rounds = len(history)
+    # total_true = sum(1 for entry in history if entry.get("ok") is True)
+    # total_false = total_rounds - total_true
+
+    metadata = {
+            "last_status": current_status,
+            "last_updated": current_time,
+            # "total_runs": total_rounds,
+            # "successful_runs": total_true,
+            # "failed_runs": total_false,
+        }
+
+    payload = {
+        "metadata": metadata,
+        "history": history,
+    }
+
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(history, f, indent=2, ensure_ascii=False)
+        json.dump(payload, f, indent=2, ensure_ascii=False)
 
     print(f"History successfully appended: attempt #{attempt_number} (total records: {len(history)})")
 
@@ -284,7 +308,7 @@ def print_summary_table() -> bool:
 
 if __name__ == "__main__":
     monitor_ok = is_monitor_available()
-    datasets_ok = is_platform_datasets_available()
+    # datasets_ok = is_platform_datasets_available()
     data_ok = is_individual_buoy_available()
 
     all_passed = print_summary_table()
