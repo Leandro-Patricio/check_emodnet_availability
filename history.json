@@ -1,1 +1,17 @@
-[]
+{
+  "metadata": {
+    "last_status": false,
+    "last_updated": "2026-10-05T13:14Z"
+  },
+  "history": [
+    {
+      "attempt": 1,
+      "ts": "2026-10-05T13:14Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    }
+  ]
+}
