@@ -6,6 +6,7 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
+from generate_status_dashboard import generate_status_dashboard
 
 import requests
 
@@ -240,7 +241,7 @@ def send_discord_alert() -> None:
     divisor = f"{'-'*7}-+-{'-'*25}-+-{'-'*45}"
 
     lines = [header, divisor]
-    links = []
+    links = [f"🔗 [Dashboard](https://github.com/Leandro-Patricio/check_emodnet_availability)"]
     for item in checks:
         icon = "✅ PASS" if item["status"] == "PASS" else "❌ FAIL"
         lines.append(f"{icon:<6} | {item['name']:<25} | {item['details']}")
@@ -310,8 +311,9 @@ if __name__ == "__main__":
     monitor_ok = is_monitor_available()
     # datasets_ok = is_platform_datasets_available()
     data_ok = is_individual_buoy_available()
+    update_execution_history()
+    generate_status_dashboard()
 
     all_passed = print_summary_table()
-    update_execution_history()
 
     sys.exit(0)
