@@ -426,6 +426,15 @@
         "EMODnet Monitor": true,
         "data": "HTTP 404"
       }
+    },
+    {
+      "attempt": 48,
+      "ts": "2026-10-07T10:12Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
     }
   ]
 }
