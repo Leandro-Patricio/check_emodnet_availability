@@ -46,6 +46,11 @@
       height: 320px;
       width: 100%;
     }
+    #loading {
+      text-align: center;
+      padding: 40px;
+      color: #94a3b8;
+    }
   </style>
 </head>
 <body>
@@ -56,74 +61,112 @@
         <span style="color: #64748b; font-size: 0.9rem;">Window: Last 7 days</span>
       </div>
       <div class="metric">
-        Uptime: <span class="uptime-val">0.0%</span> (0/45 runs)
+        Uptime: <span id="uptime-val" class="uptime-val">--%</span> (<span id="runs-count">--</span> runs)
       </div>
     </div>
-    <div class="chart-container">
+    <div id="loading">Loading data...</div>
+    <div class="chart-container" style="display: none;" id="chart-wrapper">
       <canvas id="statusChart"></canvas>
     </div>
   </div>
 
   <script>
-    const labels = ["2026-10-05T13:14:00+00:00", "2026-10-05T13:53:00+00:00", "2026-10-05T13:54:00+00:00", "2026-10-05T13:55:00+00:00", "2026-10-05T13:57:00+00:00", "2026-10-05T14:01:00+00:00", "2026-10-05T15:01:00+00:00", "2026-10-05T16:01:00+00:00", "2026-10-05T17:01:00+00:00", "2026-10-05T18:01:00+00:00", "2026-10-05T19:01:00+00:00", "2026-10-05T22:01:00+00:00", "2026-10-05T23:01:00+00:00", "2026-10-06T00:01:00+00:00", "2026-10-06T01:01:00+00:00", "2026-10-06T02:01:00+00:00", "2026-10-06T03:01:00+00:00", "2026-10-06T04:01:00+00:00", "2026-10-06T05:01:00+00:00", "2026-10-06T06:01:00+00:00", "2026-10-06T07:01:00+00:00", "2026-10-06T08:01:00+00:00", "2026-10-06T09:01:00+00:00", "2026-10-06T10:01:00+00:00", "2026-10-06T12:01:00+00:00", "2026-10-06T13:01:00+00:00", "2026-10-06T14:01:00+00:00", "2026-10-06T15:01:00+00:00", "2026-10-06T16:01:00+00:00", "2026-10-06T17:01:00+00:00", "2026-10-06T18:01:00+00:00", "2026-10-06T19:02:00+00:00", "2026-10-06T20:01:00+00:00", "2026-10-06T21:01:00+00:00", "2026-10-06T22:02:00+00:00", "2026-10-06T23:01:00+00:00", "2026-10-07T00:01:00+00:00", "2026-10-07T01:01:00+00:00", "2026-10-07T02:01:00+00:00", "2026-10-07T03:01:00+00:00", "2026-10-07T04:01:00+00:00", "2026-10-07T05:01:00+00:00", "2026-10-07T06:01:00+00:00", "2026-10-07T07:01:00+00:00", "2026-10-07T08:01:00+00:00"];
-    const overall = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    const monitor = ["FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL"];
-    const data = ["HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "No data rows", "HTTP 404", "HTTP 404", "No data rows", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404", "HTTP 404"];
+    const DATA_URL = "https://raw.githubusercontent.com/Leandro-Patricio/check_emodnet_availability/main/history.json";
+    const DAYS = 7;
 
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels.map(t => new Date(t).toLocaleString('en-US', { timeZone: 'UTC' }) + ' UTC'),
-        datasets: [{
-          label: 'System Status',
-          data: overall,
-          stepped: true,
-          borderColor: '#38bdf8',
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          pointBackgroundColor: overall.map(v => v === 1 ? '#22c55e' : '#ef4444'),
-          fill: true,
-          backgroundColor: 'rgba(56, 189, 248, 0.08)'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            min: -0.1,
-            max: 1.1,
-            ticks: {
-              stepSize: 1,
-              callback: (v) => v === 1 ? 'UP' : (v === 0 ? 'DOWN' : ''),
-              color: '#94a3b8'
-            },
-            grid: { color: '#334155' }
+    async function loadDashboard() {
+      try {
+        const response = await fetch(DATA_URL + "?nocache=" + new Date().getTime());
+        const raw = await response.json();
+        const history = Array.isArray(raw) ? raw : (raw.history || []);
+
+        const cutoff = new Date(Date.now() - DAYS * 24 * 60 * 60 * 1000);
+        
+        const filtered = history.filter(item => {
+          if (!item.ts) return false;
+          const dt = new Date(item.ts.replace("Z", "+00:00"));
+          return dt >= cutoff;
+        });
+
+        if (filtered.length === 0) {
+          document.getElementById('loading').innerText = "No data found in the last 7 days.";
+          return;
+        }
+
+        const labels = filtered.map(x => x.ts);
+        const overall = filtered.map(x => x.ok ? 1 : 0);
+        const monitor = filtered.map(x => (x.tests && x.tests.monitor === true) ? "PASS" : (x.tests && x.tests.monitor) || "FAIL");
+        const data = filtered.map(x => (x.tests && x.tests.data === true) ? "PASS" : (x.tests && x.tests.data) || "FAIL");
+
+        const totalRuns = filtered.length;
+        const successfulRuns = overall.reduce((a, b) => a + b, 0);
+        const uptime = (successfulRuns / totalRuns * 100).toFixed(1);
+
+        document.getElementById('uptime-val').innerText = `${uptime}%`;
+        document.getElementById('runs-count').innerText = `${successfulRuns}/${totalRuns}`;
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('chart-wrapper').style.display = 'block';
+
+        const ctx = document.getElementById('statusChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels.map(t => new Date(t).toLocaleString('en-US', { timeZone: 'UTC' }) + ' UTC'),
+            datasets: [{
+              label: 'System Status',
+              data: overall,
+              stepped: true,
+              borderColor: '#38bdf8',
+              borderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointBackgroundColor: overall.map(v => v === 1 ? '#22c55e' : '#ef4444'),
+              fill: true,
+              backgroundColor: 'rgba(56, 189, 248, 0.08)'
+            }]
           },
-          x: {
-            ticks: { color: '#94a3b8', maxTicksLimit: 10 },
-            grid: { display: false }
-          }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => ctx.raw === 1 ? 'Overall Status: UP' : 'Overall Status: DOWN',
-              afterBody: (ctx) => {
-                const idx = ctx[0].dataIndex;
-                return [
-                  `Monitor: ${monitor[idx]}`,
-                  `API Data (cent2): ${data[idx]}`
-                ];
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                min: -0.1,
+                max: 1.1,
+                ticks: {
+                  stepSize: 1,
+                  callback: (v) => v === 1 ? 'UP' : (v === 0 ? 'DOWN' : ''),
+                  color: '#94a3b8'
+                },
+                grid: { color: '#334155' }
+              },
+              x: {
+                ticks: { color: '#94a3b8', maxTicksLimit: 10 },
+                grid: { display: false }
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => ctx.raw === 1 ? 'Overall Status: UP' : 'Overall Status: DOWN',
+                  afterBody: (ctx) => {
+                    const idx = ctx[0].dataIndex;
+                    return [
+                      `Monitor: ${monitor[idx]}`,
+                      `API Data (cent2): ${data[idx]}`
+                    ];
+                  }
+                }
               }
             }
           }
-        }
+        });
+      } catch (err) {
+        document.getElementById('loading').innerText = "Error loading history data: " + err.message;
       }
-    });
+    }
+
+    loadDashboard();
   </script>
 </body>
 </html>

@@ -312,7 +312,7 @@ if __name__ == "__main__":
     # datasets_ok = is_platform_datasets_available()
     data_ok = is_individual_buoy_available()
     update_execution_history()
-    generate_status_dashboard()
+    # generate_status_dashboard()
 
     all_passed = print_summary_table()
 
