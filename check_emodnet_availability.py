@@ -19,6 +19,7 @@ RELIABILITY_WARNING_THRESHOLD = 95.0  # percent, logged only, not a hard failure
 # Real data host used by the generator, distinct from the host the monitor above tracks.
 PLATFORM_DATASETS_URL = "https://platform-erddap.emodnet-physics.eu/api/parameters/{parameter}/datasets"
 PLATFORM_API_URL = "https://platform-erddap.emodnet-physics.eu/api/parameters/{parameter}/data"
+DASHBOARD_URL = "https://leandro-patricio.github.io/check_emodnet_availability/dashboard.html"
 PROBE_PLATFORM_CODE = "cent2"  # known-good reference station
 PROBE_WINDOW_DAYS_AGO = 3  # buoy reports lag behind "now" by a few days
 PROBE_WINDOW_HOURS = 24
@@ -241,7 +242,7 @@ def send_discord_alert() -> None:
     divisor = f"{'-'*7}-+-{'-'*25}-+-{'-'*45}"
 
     lines = [header, divisor]
-    links = [f"🔗 [Dashboard](https://github.com/Leandro-Patricio/check_emodnet_availability)"]
+    links = [f"🔗 [Dashboard]({DASHBOARD_URL})"]
     for item in checks:
         icon = "✅ PASS" if item["status"] == "PASS" else "❌ FAIL"
         lines.append(f"{icon:<6} | {item['name']:<25} | {item['details']}")
