@@ -1,7 +1,7 @@
 {
   "metadata": {
     "last_status": false,
-    "last_updated": "2026-10-09T08:01Z"
+    "last_updated": "2026-10-09T13:01Z"
   },
   "history": [
     {
@@ -550,6 +550,15 @@
       "ok": false,
       "tests": {
         "EMODnet Monitor": "EMODnet monitor reports an issue: HTTP Error status=503",
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 62,
+      "ts": "2026-10-09T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
         "data": "HTTP 404"
       }
     }
