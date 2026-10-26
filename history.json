@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "last_status": true,
-    "last_updated": "2026-10-26T19:01Z"
+    "last_status": false,
+    "last_updated": "2026-10-26T23:01Z"
   },
   "history": [
     {
@@ -1333,6 +1333,15 @@
       "ok": true,
       "tests": {
         "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 149,
+      "ts": "2026-10-26T23:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
         "data": true
       }
     }
