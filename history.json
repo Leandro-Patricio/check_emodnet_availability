@@ -1,7 +1,7 @@
 {
   "metadata": {
     "last_status": false,
-    "last_updated": "2026-10-28T16:26Z"
+    "last_updated": "2026-10-28T16:31Z"
   },
   "history": [
     {
@@ -1490,6 +1490,17 @@
     {
       "attempt": 165,
       "ts": "2026-10-28T16:26Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "HTTP 404",
+        "form": "HTTP 404",
+        "CETR": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 166,
+      "ts": "2026-10-28T16:31Z",
       "ok": false,
       "tests": {
         "EMODnet Monitor": true,
