@@ -1,7 +1,7 @@
 {
   "metadata": {
     "last_status": false,
-    "last_updated": "2026-10-28T09:01Z"
+    "last_updated": "2026-10-28T16:22Z"
   },
   "history": [
     {
@@ -1406,6 +1406,85 @@
       "tests": {
         "EMODnet Monitor": true,
         "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 157,
+      "ts": "2026-10-28T11:16Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "API Datacent2": "Could not reach the EMODnet platform data API: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A16%3A09Z&end_time=2026-10-28T11%3A16%3A09Z&platform_code=cent2&format=csv"
+      }
+    },
+    {
+      "attempt": 158,
+      "ts": "2026-10-28T11:16Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "API Data cent2": "Could not reach the EMODnet platform data API: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A16%3A31Z&end_time=2026-10-28T11%3A16%3A31Z&platform_code=cent2&format=csv"
+      }
+    },
+    {
+      "attempt": 159,
+      "ts": "2026-10-28T11:18Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "API Data cent2": "Could not reach the EMODnet platform data API: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A18%3A01Z&end_time=2026-10-28T11%3A18%3A01Z&platform_code=cent2&format=csv"
+      }
+    },
+    {
+      "attempt": 160,
+      "ts": "2026-10-28T11:30Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "API Data (all probes failed)": "All platforms failed. Details: cent2: Request failed: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A29%3A58Z&end_time=2026-10-28T11%3A29%3A58Z&platform_code=cent2&format=csv; form: Request failed: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A30%3A00Z&end_time=2026-10-28T11%3A30%3A00Z&platform_code=form&format=csv; OT15: Request failed: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A30%3A02Z&end_time=2026-10-28T11%3A30%3A02Z&platform_code=OT15&format=csv; CETR: Request failed: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A30%3A05Z&end_time=2026-10-28T11%3A30%3A05Z&platform_code=CETR&format=csv"
+      }
+    },
+    {
+      "attempt": 161,
+      "ts": "2026-10-28T11:31Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "API Data (all probes failed)": "All platforms failed. Details: cent2: Request failed: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A31%3A00Z&end_time=2026-10-28T11%3A31%3A00Z&platform_code=cent2&format=csv; form: Request failed: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A31%3A02Z&end_time=2026-10-28T11%3A31%3A02Z&platform_code=form&format=csv; OT15: Request failed: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A31%3A04Z&end_time=2026-10-28T11%3A31%3A04Z&platform_code=OT15&format=csv; CETR: Request failed: 404 Client Error: Not Found for url: https://platform-erddap.emodnet-physics.eu/api/parameters/SLEV/data?start_time=2026-10-25T11%3A31%3A06Z&end_time=2026-10-28T11%3A31%3A06Z&platform_code=CETR&format=csv"
+      }
+    },
+    {
+      "attempt": 162,
+      "ts": "2026-10-28T11:40Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "buoy:cent2": "HTTP 404",
+        "buoy:form": "HTTP 404",
+        "buoy:OT15": "HTTP 404",
+        "buoy:CETR": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 163,
+      "ts": "2026-10-28T16:21Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "HTTP 404",
+        "form": "HTTP 404",
+        "CETR": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 164,
+      "ts": "2026-10-28T16:22Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "HTTP 404",
+        "form": "HTTP 404",
+        "CETR": "HTTP 404"
       }
     }
   ]

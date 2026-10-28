@@ -10,9 +10,6 @@ from generate_status_dashboard import generate_status_dashboard
 import re
 import requests
 
-# load environment. Only needed for local development. Remeber to add the discord webhook to the .env
-from dotenv import load_dotenv
-load_dotenv()
 
 DEFAULT_MONITOR_URL = "https://monitor.emodnet.eu/resource/55/json"
 DEFAULT_REQUEST_TIMEOUT = 60
@@ -23,11 +20,16 @@ RELIABILITY_WARNING_THRESHOLD = 95.0  # percent, logged only, not a hard failure
 # Real data host used by the generator, distinct from the host the monitor above tracks.
 PLATFORM_API_URL = "https://platform-erddap.emodnet-physics.eu/api/parameters/{parameter}/data"
 DASHBOARD_URL = "https://leandro-patricio.github.io/check_emodnet_availability/dashboard.html"
-PROBE_PLATFORM_CODES: List[str] = ["cent2", "form", "OT15", "CETR"]  # known-good reference stations
+PROBE_PLATFORM_CODES: List[str] = ["cent2", "form", "CETR"]  # known-good reference stations
 PROBE_WINDOW_DAYS_AGO = 3  # buoy reports lag behind "now" by a few days
-PROBE_WINDOW_HOURS = 24
 
-HISTORY_FILE = Path("history.json")
+# Resolve the directory of this script to ensure history.json is always placed alongside it
+MODULE_DIR = Path(__file__).resolve().parent
+HISTORY_FILE = MODULE_DIR / "history.json"
+
+EMODNET_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1509487781926277243/6J8dtMdpVf0RZq3bKYFh_5LJBswynTjvzOMcS1yBdIaWK8nEsijs79e-mxOtT9-dC1gE"
+# TEST_EMODNET_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1557301149034614825/8cDU3Kg8PiZexQSSbGtNGZvDHkLcE7oIXeVhwDX_xfe3oC9D1oBvBI0dH5A6Koyc9cf7"
+DISCORD_URL=EMODNET_DISCORD_WEBHOOK_URL
 
 # --- Global state ---
 STATUS_REPORT: Dict[str, List[Dict[str, str]]] = {"checks": []}
@@ -44,7 +46,6 @@ def record_result(name: str, passed: bool, details: str, url: Optional[str] = No
             "url": url,
         }
     )
-
 
 def update_execution_history() -> None:
     """Load full historical log, append compact record permanently, and persist."""
@@ -104,11 +105,20 @@ def update_execution_history() -> None:
         "history": history,
     }
 
+        # Ensure target directory exists before writing
+    HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
+
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
 
     print(f"History successfully appended: attempt #{attempt_number} (total records: {len(history)})")
 
+
+def _unavailable(name: str, message: str, url: Optional[str] = None) -> bool:
+    """Log failure and record into global status report."""
+    print(f"EMODnet is unavailable: {message}")
+    record_result(name, False, message, url=url)
+    return False
 
 def is_monitor_available(
     monitor_url: Optional[str] = None,
@@ -159,7 +169,6 @@ def is_monitor_available(
     print("EMODnet monitor is healthy.")
     record_result("EMODnet Monitor", True, "Healthy", url=monitor_url)
     return True
-
 
 
 def _sanitize_error_message(message: str) -> str:
@@ -224,18 +233,18 @@ def is_individual_buoy_available(
         passed, details, url = _probe_platform(code, timeout=timeout)
         if passed:
             print(f"✅ EMODnet API Data ({code}) succeeded.")
-            record_result(f"buoy:{code}", True, details, url=url)
+            record_result(f"{code}", True, details, url=url)
             return True
 
         print(f"Platform {code} failed: {details}. Trying next platform...")
-        record_result(f"buoy:{code}", False, details, url=url)
+        record_result(f"{code}", False, details, url=url)
 
     return False
 
 
 def send_discord_alert() -> None:
     """Send plain text table alert using full Discord message width."""
-    webhook_url = os.getenv("EMODNET_DISCORD_WEBHOOK_URL")
+    webhook_url = DISCORD_URL
     if not webhook_url:
         return
 
@@ -279,11 +288,6 @@ def send_discord_alert() -> None:
 
 
 
-def _unavailable(name: str, message: str, url: Optional[str] = None) -> bool:
-    print(f"EMODnet is unavailable: {message}")
-    record_result(name, False, message, url=url)
-    return False
-
 def print_summary_table() -> bool:
     """Print results table to stdout, GitHub Actions Step Summary, and send single Discord alert if needed."""
     checks = STATUS_REPORT["checks"]
@@ -321,4 +325,4 @@ if __name__ == "__main__":
 
     all_passed = print_summary_table()
 
-    sys.exit(0)
+    sys.exit(0 if all_passed else 1)
