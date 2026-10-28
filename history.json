@@ -1,7 +1,7 @@
 {
   "metadata": {
     "last_status": false,
-    "last_updated": "2026-10-07T09:46Z"
+    "last_updated": "2026-10-28T09:01Z"
   },
   "history": [
     {
@@ -412,6 +412,996 @@
     {
       "attempt": 46,
       "ts": "2026-10-07T09:46Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 47,
+      "ts": "2026-10-07T10:12Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 48,
+      "ts": "2026-10-07T10:12Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 49,
+      "ts": "2026-10-07T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 50,
+      "ts": "2026-10-07T16:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 51,
+      "ts": "2026-10-07T19:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 52,
+      "ts": "2026-10-07T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 53,
+      "ts": "2026-10-08T01:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 54,
+      "ts": "2026-10-08T04:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 55,
+      "ts": "2026-10-08T07:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 56,
+      "ts": "2026-10-08T08:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 57,
+      "ts": "2026-10-08T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 58,
+      "ts": "2026-10-08T18:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 59,
+      "ts": "2026-10-08T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 60,
+      "ts": "2026-10-09T03:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 61,
+      "ts": "2026-10-09T08:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: HTTP Error status=503",
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 62,
+      "ts": "2026-10-09T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 63,
+      "ts": "2026-10-09T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 64,
+      "ts": "2026-10-09T22:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 65,
+      "ts": "2026-10-10T03:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 66,
+      "ts": "2026-10-10T08:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 67,
+      "ts": "2026-10-10T13:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 68,
+      "ts": "2026-10-10T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 69,
+      "ts": "2026-10-10T22:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 70,
+      "ts": "2026-10-11T03:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 71,
+      "ts": "2026-10-11T08:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 72,
+      "ts": "2026-10-11T13:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 73,
+      "ts": "2026-10-11T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 74,
+      "ts": "2026-10-11T22:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 75,
+      "ts": "2026-10-12T03:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 76,
+      "ts": "2026-10-12T08:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 77,
+      "ts": "2026-10-12T13:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 78,
+      "ts": "2026-10-12T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 79,
+      "ts": "2026-10-12T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "No data rows"
+      }
+    },
+    {
+      "attempt": 80,
+      "ts": "2026-10-13T03:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 81,
+      "ts": "2026-10-13T08:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 82,
+      "ts": "2026-10-13T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 83,
+      "ts": "2026-10-13T18:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 84,
+      "ts": "2026-10-13T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 85,
+      "ts": "2026-10-14T03:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 86,
+      "ts": "2026-10-14T08:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 87,
+      "ts": "2026-10-14T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 88,
+      "ts": "2026-10-14T18:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 89,
+      "ts": "2026-10-14T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 90,
+      "ts": "2026-10-15T03:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 91,
+      "ts": "2026-10-15T08:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 92,
+      "ts": "2026-10-15T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 93,
+      "ts": "2026-10-15T18:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 94,
+      "ts": "2026-10-15T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 95,
+      "ts": "2026-10-16T03:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 96,
+      "ts": "2026-10-16T08:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "No data rows"
+      }
+    },
+    {
+      "attempt": 97,
+      "ts": "2026-10-16T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 98,
+      "ts": "2026-10-16T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 99,
+      "ts": "2026-10-16T22:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 100,
+      "ts": "2026-10-17T03:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 101,
+      "ts": "2026-10-17T08:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 102,
+      "ts": "2026-10-17T13:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 103,
+      "ts": "2026-10-17T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 104,
+      "ts": "2026-10-17T22:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 105,
+      "ts": "2026-10-18T03:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 106,
+      "ts": "2026-10-18T08:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 107,
+      "ts": "2026-10-18T13:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 108,
+      "ts": "2026-10-18T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 109,
+      "ts": "2026-10-18T22:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 110,
+      "ts": "2026-10-19T03:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 111,
+      "ts": "2026-10-19T08:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 112,
+      "ts": "2026-10-19T13:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 113,
+      "ts": "2026-10-19T18:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
+        "data": true
+      }
+    },
+    {
+      "attempt": 114,
+      "ts": "2026-10-19T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
+        "data": true
+      }
+    },
+    {
+      "attempt": 115,
+      "ts": "2026-10-20T03:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
+        "data": true
+      }
+    },
+    {
+      "attempt": 116,
+      "ts": "2026-10-20T08:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
+        "data": true
+      }
+    },
+    {
+      "attempt": 117,
+      "ts": "2026-10-20T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 118,
+      "ts": "2026-10-20T18:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 119,
+      "ts": "2026-10-20T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 120,
+      "ts": "2026-10-21T03:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 121,
+      "ts": "2026-10-21T08:02Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 122,
+      "ts": "2026-10-21T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 123,
+      "ts": "2026-10-21T18:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 124,
+      "ts": "2026-10-21T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "No data rows"
+      }
+    },
+    {
+      "attempt": 125,
+      "ts": "2026-10-22T03:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 126,
+      "ts": "2026-10-22T08:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 127,
+      "ts": "2026-10-22T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 128,
+      "ts": "2026-10-22T18:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 129,
+      "ts": "2026-10-22T22:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 130,
+      "ts": "2026-10-23T03:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 131,
+      "ts": "2026-10-23T08:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 132,
+      "ts": "2026-10-23T13:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 133,
+      "ts": "2026-10-23T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 134,
+      "ts": "2026-10-23T22:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 135,
+      "ts": "2026-10-24T03:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 136,
+      "ts": "2026-10-24T08:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 137,
+      "ts": "2026-10-24T13:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 138,
+      "ts": "2026-10-24T18:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 139,
+      "ts": "2026-10-24T22:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 140,
+      "ts": "2026-10-25T04:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 141,
+      "ts": "2026-10-25T09:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 142,
+      "ts": "2026-10-25T14:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 143,
+      "ts": "2026-10-25T19:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 144,
+      "ts": "2026-10-25T23:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 145,
+      "ts": "2026-10-26T04:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 146,
+      "ts": "2026-10-26T09:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 147,
+      "ts": "2026-10-26T14:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 148,
+      "ts": "2026-10-26T19:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 149,
+      "ts": "2026-10-26T23:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "EMODnet monitor reports an issue: Request Err: ConnectionError HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Max retries exceeded with url: /erddap/ (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='erddap.emodnet-physics.eu', port=443): Read timed out. (read timeout=45)\"))",
+        "data": true
+      }
+    },
+    {
+      "attempt": 150,
+      "ts": "2026-10-27T04:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 151,
+      "ts": "2026-10-27T09:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": true
+      }
+    },
+    {
+      "attempt": 152,
+      "ts": "2026-10-27T14:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 153,
+      "ts": "2026-10-27T19:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 154,
+      "ts": "2026-10-27T23:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 155,
+      "ts": "2026-10-28T04:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "data": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 156,
+      "ts": "2026-10-28T09:01Z",
       "ok": false,
       "tests": {
         "EMODnet Monitor": true,
