@@ -21,7 +21,7 @@ RELIABILITY_WARNING_THRESHOLD = 95.0  # percent, logged only, not a hard failure
 PLATFORM_API_URL = "https://platform-erddap.emodnet-physics.eu/api/parameters/{parameter}/data"
 DASHBOARD_URL = "https://leandro-patricio.github.io/check_emodnet_availability/dashboard.html"
 PROBE_PLATFORM_CODES: List[str] = ["cent2", "form", "CETR"]  # known-good reference stations
-PROBE_WINDOW_DAYS_AGO = 3  # buoy reports lag behind "now" by a few days
+PROBE_WINDOW_DAYS_AGO = 14  # buoy reports lag behind "now" by a few days
 
 # Resolve the directory of this script to ensure history.json is always placed alongside it
 MODULE_DIR = Path(__file__).resolve().parent
@@ -214,7 +214,7 @@ def _probe_platform(platform_code: str, timeout: float) -> tuple[bool, str, Opti
     if len(lines) <= 1:
         return False, "No data rows", query_url
 
-    return True, f"Healthy ({len(lines)-1} rows)", query_url
+    return True, f"Healthy", query_url
 
 
 def is_individual_buoy_available(
