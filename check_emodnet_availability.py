@@ -7,9 +7,12 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 from generate_status_dashboard import generate_status_dashboard
-
+import re
 import requests
 
+# load environment. Only needed for local development. Remeber to add the discord webhook to the .env
+from dotenv import load_dotenv
+load_dotenv()
 
 DEFAULT_MONITOR_URL = "https://monitor.emodnet.eu/resource/55/json"
 DEFAULT_REQUEST_TIMEOUT = 60
@@ -20,7 +23,7 @@ RELIABILITY_WARNING_THRESHOLD = 95.0  # percent, logged only, not a hard failure
 # Real data host used by the generator, distinct from the host the monitor above tracks.
 PLATFORM_API_URL = "https://platform-erddap.emodnet-physics.eu/api/parameters/{parameter}/data"
 DASHBOARD_URL = "https://leandro-patricio.github.io/check_emodnet_availability/dashboard.html"
-PROBE_PLATFORM_CODE = "cent2"  # known-good reference station
+PROBE_PLATFORM_CODES: List[str] = ["cent2", "form", "OT15", "CETR"]  # known-good reference stations
 PROBE_WINDOW_DAYS_AGO = 3  # buoy reports lag behind "now" by a few days
 PROBE_WINDOW_HOURS = 24
 
@@ -159,13 +162,24 @@ def is_monitor_available(
 
 
 
-def is_individual_buoy_available(
-    platform_code: str = PROBE_PLATFORM_CODE,
-    timeout: Optional[float] = None,
-) -> bool:
-    """Probe the actual data host with a small, recent SLEV request."""
-    timeout = timeout or float(os.getenv("EMODNET_REQUEST_TIMEOUT", DEFAULT_REQUEST_TIMEOUT))
+def _sanitize_error_message(message: str) -> str:
+    """Extract a concise summary from request errors or empty response messages."""
+    status_match = re.search(r"(\d{3})\s+Client Error|\bHTTP\s*(\d{3})\b", message, re.IGNORECASE)
+    if status_match:
+        code = status_match.group(1) or status_match.group(2)
+        return f"HTTP {code}"
+    if "Connection refused" in message or "Failed to establish a new connection" in message:
+        return "Connection refused"
+    if "timed out" in message.lower():
+        return "Timeout"
+    if "no data rows" in message.lower():
+        return "No data rows"
+    # Fallback to the first phrase before any URL details
+    return message.split(" for url:")[0].split(":")[0].strip()
 
+
+def _probe_platform(platform_code: str, timeout: float) -> tuple[bool, str, Optional[str]]:
+    """Probe a single buoy platform code."""
     end = datetime.now(timezone.utc)
     start = end - timedelta(days=PROBE_WINDOW_DAYS_AGO)
     params = {
@@ -175,24 +189,48 @@ def is_individual_buoy_available(
         "format": "csv",
     }
 
-    print(f"Checking EMODnet API Data " + platform_code + " status...")
+    endpoint_url = PLATFORM_API_URL.format(parameter="SLEV")
+    query_url: Optional[str] = None
+
+    print(f"Checking EMODnet API Data ({platform_code}) status...")
 
     try:
-        responseSpecificBuoy = requests.get(
-            PLATFORM_API_URL.format(parameter="SLEV"), params=params, timeout=timeout
-        )
-        print(f"Querying EMODNET platform API: {responseSpecificBuoy.url}")
-        responseSpecificBuoy.raise_for_status()
+        response = requests.get(endpoint_url, params=params, timeout=timeout)
+        query_url = response.url
+        print(f"Querying EMODnet platform API: {query_url}")
+        response.raise_for_status()
     except requests.exceptions.RequestException as error:
-        return _unavailable(f"Could not reach the EMODnet platform data API: {error}", url=responseSpecificBuoy.url)
+        return False, _sanitize_error_message(str(error)), query_url or endpoint_url
 
-    lines = [line for line in responseSpecificBuoy.text.splitlines() if line.strip()]
+    lines = [line for line in response.text.splitlines() if line.strip()]
     if len(lines) <= 1:
-         return _unavailable("EMODnet platform data API returned no data rows for the probe window.", url=responseSpecificBuoy.url)
+        return False, "No data rows", query_url
 
-    print("✅ EMODnet API Data", platform_code, " is healthy.")
-    record_result("API Data" + platform_code, True, f"Healthy ({len(lines)-1} rows)", url=responseSpecificBuoy.url)
-    return True
+    return True, f"Healthy ({len(lines)-1} rows)", query_url
+
+
+def is_individual_buoy_available(
+    platform_codes: Optional[List[str]] = None,
+    timeout: Optional[float] = None,
+) -> bool:
+    """Iterate through candidate platforms until one succeeds; fail only if all fail.
+    
+    Records each probed platform in STATUS_REPORT so it appears individually in the history.
+    """
+    platforms = platform_codes or PROBE_PLATFORM_CODES
+    timeout = timeout or float(os.getenv("EMODNET_REQUEST_TIMEOUT", DEFAULT_REQUEST_TIMEOUT))
+
+    for code in platforms:
+        passed, details, url = _probe_platform(code, timeout=timeout)
+        if passed:
+            print(f"✅ EMODnet API Data ({code}) succeeded.")
+            record_result(f"buoy:{code}", True, details, url=url)
+            return True
+
+        print(f"Platform {code} failed: {details}. Trying next platform...")
+        record_result(f"buoy:{code}", False, details, url=url)
+
+    return False
 
 
 def send_discord_alert() -> None:
