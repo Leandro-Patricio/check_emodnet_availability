@@ -27,9 +27,9 @@ PROBE_WINDOW_DAYS_AGO = 3  # buoy reports lag behind "now" by a few days
 MODULE_DIR = Path(__file__).resolve().parent
 HISTORY_FILE = MODULE_DIR / "history.json"
 
-EMODNET_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1509487781926277243/6J8dtMdpVf0RZq3bKYFh_5LJBswynTjvzOMcS1yBdIaWK8nEsijs79e-mxOtT9-dC1gE"
-# TEST_EMODNET_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1557301149034614825/8cDU3Kg8PiZexQSSbGtNGZvDHkLcE7oIXeVhwDX_xfe3oC9D1oBvBI0dH5A6Koyc9cf7"
-DISCORD_URL=EMODNET_DISCORD_WEBHOOK_URL
+# EMODNET_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1509487781926277243/6J8dtMdpVf0RZq3bKYFh_5LJBswynTjvzOMcS1yBdIaWK8nEsijs79e-mxOtT9-dC1gE"
+TEST_EMODNET_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1557301149034614825/8cDU3Kg8PiZexQSSbGtNGZvDHkLcE7oIXeVhwDX_xfe3oC9D1oBvBI0dH5A6Koyc9cf7"
+DISCORD_URL=TEST_EMODNET_DISCORD_WEBHOOK_URL
 
 # --- Global state ---
 STATUS_REPORT: Dict[str, List[Dict[str, str]]] = {"checks": []}
