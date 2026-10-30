@@ -1,7 +1,7 @@
 {
   "metadata": {
     "last_status": false,
-    "last_updated": "2026-10-30T13:57Z"
+    "last_updated": "2026-10-30T14:01Z"
   },
   "history": [
     {
@@ -1601,6 +1601,17 @@
     {
       "attempt": 176,
       "ts": "2026-10-30T13:57Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "No data rows",
+        "form": "No data rows",
+        "CETR": "No data rows"
+      }
+    },
+    {
+      "attempt": 177,
+      "ts": "2026-10-30T14:01Z",
       "ok": false,
       "tests": {
         "EMODnet Monitor": true,
