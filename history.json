@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "last_status": true,
-    "last_updated": "2026-10-28T16:45Z"
+    "last_status": false,
+    "last_updated": "2026-10-30T14:01Z"
   },
   "history": [
     {
@@ -1505,6 +1505,119 @@
       "tests": {
         "EMODnet Monitor": true,
         "cent2": true
+      }
+    },
+    {
+      "attempt": 167,
+      "ts": "2026-10-28T19:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": true
+      }
+    },
+    {
+      "attempt": 168,
+      "ts": "2026-10-28T23:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": true
+      }
+    },
+    {
+      "attempt": 169,
+      "ts": "2026-10-29T04:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": true
+      }
+    },
+    {
+      "attempt": 170,
+      "ts": "2026-10-29T09:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": true
+      }
+    },
+    {
+      "attempt": 171,
+      "ts": "2026-10-29T14:02Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "No data rows",
+        "form": "No data rows",
+        "CETR": "No data rows"
+      }
+    },
+    {
+      "attempt": 172,
+      "ts": "2026-10-29T19:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "HTTP 404",
+        "form": "HTTP 404",
+        "CETR": "HTTP 404"
+      }
+    },
+    {
+      "attempt": 173,
+      "ts": "2026-10-29T23:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "No data rows",
+        "form": "No data rows",
+        "CETR": "No data rows"
+      }
+    },
+    {
+      "attempt": 174,
+      "ts": "2026-10-30T04:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "No data rows",
+        "form": "No data rows",
+        "CETR": "No data rows"
+      }
+    },
+    {
+      "attempt": 175,
+      "ts": "2026-10-30T09:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "No data rows",
+        "form": "No data rows",
+        "CETR": "No data rows"
+      }
+    },
+    {
+      "attempt": 176,
+      "ts": "2026-10-30T13:57Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "No data rows",
+        "form": "No data rows",
+        "CETR": "No data rows"
+      }
+    },
+    {
+      "attempt": 177,
+      "ts": "2026-10-30T14:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": "No data rows",
+        "form": "No data rows",
+        "CETR": "No data rows"
       }
     }
   ]
