@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "last_status": true,
-    "last_updated": "2026-11-09T04:01Z"
+    "last_status": false,
+    "last_updated": "2026-11-09T09:02Z"
   },
   "history": [
     {
@@ -2102,6 +2102,15 @@
       "ok": true,
       "tests": {
         "EMODnet Monitor": true,
+        "cent2": true
+      }
+    },
+    {
+      "attempt": 227,
+      "ts": "2026-11-09T09:02Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "Could not connect to the EMODnet monitor: HTTPSConnectionPool(host='monitor.emodnet.eu', port=443): Read timed out. (read timeout=60.0)",
         "cent2": true
       }
     }
