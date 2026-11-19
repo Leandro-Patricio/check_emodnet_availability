@@ -1,7 +1,7 @@
 {
   "metadata": {
     "last_status": true,
-    "last_updated": "2026-11-18T23:01Z"
+    "last_updated": "2026-11-19T04:01Z"
   },
   "history": [
     {
@@ -2540,6 +2540,15 @@
     {
       "attempt": 275,
       "ts": "2026-11-18T23:01Z",
+      "ok": true,
+      "tests": {
+        "EMODnet Monitor": true,
+        "cent2": true
+      }
+    },
+    {
+      "attempt": 276,
+      "ts": "2026-11-19T04:01Z",
       "ok": true,
       "tests": {
         "EMODnet Monitor": true,
