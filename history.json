@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "last_status": true,
-    "last_updated": "2026-11-27T09:01Z"
+    "last_status": false,
+    "last_updated": "2026-11-27T14:01Z"
   },
   "history": [
     {
@@ -2931,6 +2931,15 @@
       "ok": true,
       "tests": {
         "EMODnet Monitor": true,
+        "cent2": true
+      }
+    },
+    {
+      "attempt": 318,
+      "ts": "2026-11-27T14:01Z",
+      "ok": false,
+      "tests": {
+        "EMODnet Monitor": "Could not connect to the EMODnet monitor: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
         "cent2": true
       }
     }
